@@ -1,22 +1,27 @@
 import numpy as np
-import cvxpy as cp
 import csv
 import matplotlib.pyplot as plt
 import os
 
-# Funkcja rysujaca wykres widoczny w instrukcji jako rysunek 2.
-def wykres_danych():
-    # Pobranie danych
+def wczytaj_dane():
+    # Pobranie danych z pliku
     directory = os.path.dirname(__file__)
     file_path = os.path.join(directory, 'data01.csv')
     data = csv.reader(open(file_path, 'r'), delimiter=',')
 
-    # Przygotowanie danych do narysowania wykresu
+    # Skopiowanie danych do dwoch tablic
     x_values = []
     y_values = []
     for row in data:
         x_values.append(float(row[0]))
         y_values.append(float(row[1]))
+
+    # Zwrocenie dwoch tablic zawierajacych kolejnosci wartosci x i y
+    return x_values, y_values
+
+def wykres_danych():
+    # Wczytanie danych z pliku
+    x_values, y_values = wczytaj_dane()
 
     # Rysyowanie wykresu
     plt.scatter(x_values, y_values, color='r')
@@ -29,39 +34,25 @@ def wykres_danych():
     plt.title('Wykres danych', fontsize=20)
     plt.show()
 
-# Funkcja rysujaca wykres widoczny w instrukcji jako rysunek 3.
-def rozwiazanie():
-    n = 100
-    x = cp.Variable(n)
-    y = cp.Variable()
-    a = cp.Variable()
-    b = cp.Variable()
-    tau = cp.Variable()
+def rozwiazanie_LS():
+    x, y = wczytaj_dane()
+    ones = np.ones(len(x))
+    fi = np.column_stack((x, ones))
+    teta = np.linalg.pinv(fi) @ y
+    return teta[0], teta[1]
 
-    teta = np.array([a, b])
-    bb = np.array([y -y])
-    c = np.array([0, 1])
-    z = np.vstack((teta, tau))
+def rozwiazanie_LP():
+    return None, None
 
-    fi = np.full((n, 2), [x, 1])
+def wykres_rozwiazan():
+    pass
 
-    A = np.array([[fi, -np.eye(n)], [-fi, -np.eye(n)]])
+if __name__ == "__main__":
+    # wykres_danych()
 
-    # LB = np.array([-1.0, -0.5])
-    # UB = np.array([1.5, 1.25])
-    # AA = np.vstack((A,np.eye(n),-np.eye(n)))
-    # bb = np.hstack((b,UB,-LB))
-    objective = cp.Minimize(c.T @ z)
-    constraints = [ A @ z <= bb ]
-    problem = cp.Problem(objective, constraints)
-    problem.solve()
-    print("\n")
-    print("--------------")
-    print(x.value)
-    print("--------------")
+    a_ls, b_ls = rozwiazanie_LS()
+    print('[LS] a: {} b: {}'.format(a_ls, b_ls))
 
-
-if  __name__ == "__main__":
-    wykres_danych()
-    rozwiazanie()
+    a_lp, b_lp = rozwiazanie_LP()
+    print('[LP] a: {} b: {}'.format(a_lp, b_lp))
 
