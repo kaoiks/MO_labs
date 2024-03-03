@@ -1,4 +1,5 @@
 import numpy as np
+import cvxpy as cp
 import csv
 import matplotlib.pyplot as plt
 import os
@@ -34,16 +35,51 @@ def wykres_danych():
     plt.title('Wykres danych', fontsize=20)
     plt.show()
 
+def stworz_fi(x):
+    # Kolumna zawierajaca jedynki
+    ones = np.ones(len(x))
+    # Zlaczenie kolumn zawierajacych x i jedynki w macierz
+    fi = np.column_stack((x, ones))
+    return fi
+
 def rozwiazanie_LS():
     x, y = wczytaj_dane()
-    ones = np.ones(len(x))
-    fi = np.column_stack((x, ones))
+    fi = stworz_fi(x)
+    # pseodoodwrotność Moore’a-Penrose’a
     teta = np.linalg.pinv(fi) @ y
     return teta[0], teta[1]
 
 def rozwiazanie_LP():
-    return None, None
+    x, y = wczytaj_dane()
 
+    # Konwertuj dane w postaci listy do macierzy
+    x = np.array(x)
+    y = np.array(y)
+
+    # Stworz wymagane macierze
+    c = np.array([0, 1, 1, 1])
+    b = np.hstack((y, y * -1))
+    fi = stworz_fi(x)
+    I = np.eye(N = len(x), M = 2)
+
+    A_row1 = np.hstack((fi, I * -1))
+    A_row2 = np.hstack((fi * -1, I * -1))
+    A = np.vstack((A_row1, A_row2))
+
+    # Definicja funkcji i minimalizacja
+    z = cp.Variable((4, 1))
+    print(b.shape)
+
+    objective = cp.Minimize(c.T @ z)
+    # Problem z mnozeniem macierzy, zle rozmiary macierzy
+    constraints = [ A @ z <= b]
+
+    problem = cp.Problem(objective, constraints)
+    problem.solve()
+
+    return z.value, z.value
+
+# To do
 def wykres_rozwiazan():
     pass
 
