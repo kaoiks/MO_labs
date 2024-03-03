@@ -56,31 +56,36 @@ def rozwiazanie_LP():
     x = np.array(x)
     y = np.array(y)
 
-    # Stworz wymagane macierze
-    c = np.array([0, 1, 1, 1])
+    # Macierz c zawiera 0 i tyle jedynek aby dalo sie jej transpozycje mnozyc przez z
+    c = np.hstack(([0], np.ones(len(x) + 1)))
+
     b = np.hstack((y, y * -1))
     fi = stworz_fi(x)
-    I = np.eye(N = len(x), M = 2)
 
+    # Rozmiar macierzy I nalezy dostosowac tak aby dalo sie mnozyc macierz A przez z
+    I = np.eye(N = len(x), M = len(x))
+
+    # Definicja macierzy A
     A_row1 = np.hstack((fi, I * -1))
     A_row2 = np.hstack((fi * -1, I * -1))
     A = np.vstack((A_row1, A_row2))
 
-    # Definicja funkcji i minimalizacja
-    z = cp.Variable((4, 1))
-    print(b.shape)
+    # Definicja zmiennej z (macierz jednokolumnowa [a, b, ... tau_N])
+    z = cp.Variable(len(x) + 2)
 
+    # Definicja funkcji i ograniczen
     objective = cp.Minimize(c.T @ z)
-    # Problem z mnozeniem macierzy, zle rozmiary macierzy
     constraints = [ A @ z <= b]
 
+    # Minimalizacja funkcji
     problem = cp.Problem(objective, constraints)
     problem.solve()
 
-    return z.value, z.value
+    # Pierwsze dwa elementy rozwiazania z sa wspolczynnikami a i b
+    return z.value[0], z.value[1]
 
 # To do
-def wykres_rozwiazan():
+def wykres_rozwiazan(a_ls, b_ls, a_lp, b_lp):
     pass
 
 if __name__ == "__main__":
@@ -91,4 +96,6 @@ if __name__ == "__main__":
 
     a_lp, b_lp = rozwiazanie_LP()
     print('[LP] a: {} b: {}'.format(a_lp, b_lp))
+
+    wykres_rozwiazan(a_ls, b_ls, a_lp, b_lp)
 
