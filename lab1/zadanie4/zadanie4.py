@@ -4,6 +4,9 @@ import csv
 import matplotlib.pyplot as plt
 import os
 
+# plt.rc('text', usetex=True)
+
+
 def wczytaj_dane():
     # Pobranie danych z pliku
     directory = os.path.dirname(__file__)
@@ -20,6 +23,7 @@ def wczytaj_dane():
     # Zwrocenie dwoch tablic zawierajacych kolejnosci wartosci x i y
     return x_values, y_values
 
+
 def wykres_danych():
     # Wczytanie danych z pliku
     x_values, y_values = wczytaj_dane()
@@ -35,6 +39,7 @@ def wykres_danych():
     plt.title('Wykres danych', fontsize=20)
     plt.show()
 
+
 def stworz_fi(x):
     # Kolumna zawierajaca jedynki
     ones = np.ones(len(x))
@@ -42,12 +47,14 @@ def stworz_fi(x):
     fi = np.column_stack((x, ones))
     return fi
 
+
 def rozwiazanie_LS():
     x, y = wczytaj_dane()
     fi = stworz_fi(x)
     # pseodoodwrotność Moore’a-Penrose’a
     teta = np.linalg.pinv(fi) @ y
     return teta[0], teta[1]
+
 
 def rozwiazanie_LP():
     x, y = wczytaj_dane()
@@ -84,9 +91,29 @@ def rozwiazanie_LP():
     # Pierwsze dwa elementy rozwiazania z sa wspolczynnikami a i b
     return z.value[0], z.value[1]
 
-# To do
+
+# TODO
 def wykres_rozwiazan(a_ls, b_ls, a_lp, b_lp):
-    pass
+    x_values, y_values = wczytaj_dane()
+    x = np.linspace(0, 10, 100)
+
+    y_ls = a_ls * x + b_ls
+    y_lp = a_lp * x + b_lp
+
+    plt.plot(x_values, y_values, 'rs', label='(x_i,y_i), i=1,...,N', markersize=3)
+    plt.plot(x, y_ls, label='y = ax + b (LS)', color='black')
+    plt.plot(x, y_lp, label='y = ax + b (LP)', color='blue')
+
+    plt.xlim(0, 10)
+    plt.ylim(2, 10)
+    plt.yticks(range(2, 10 + 1, 2))
+    plt.ylabel('y', fontsize=17)
+    plt.xlabel('x', fontsize=17)
+    plt.tick_params(direction='in', which='both')
+    plt.grid(True)
+    plt.legend(loc='upper left')
+    plt.show()
+
 
 if __name__ == "__main__":
     # wykres_danych()
