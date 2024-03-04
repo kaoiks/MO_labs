@@ -79,7 +79,7 @@ def rozwiazanie_LP():
 
     # Minimalizacja funkcji
     problem = cp.Problem(objective, constraints)
-    problem.solve()
+    problem.solve(solver=cp.ECOS)
 
     # Pierwsze dwa elementy rozwiazania z sa wspolczynnikami a i b
     return z.value[0], z.value[1]
