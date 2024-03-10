@@ -116,7 +116,7 @@ def wykres_rozwiazan(a_ls, b_ls, a_lp, b_lp):
 
 
 if __name__ == "__main__":
-    # wykres_danych()
+    wykres_danych()
 
     a_ls, b_ls = rozwiazanie_LS()
     print('[LS] a: {} b: {}'.format(a_ls, b_ls))
