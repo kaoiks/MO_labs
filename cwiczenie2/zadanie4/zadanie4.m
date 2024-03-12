@@ -6,7 +6,7 @@ h = a / N;
 % plot(y_fixed)
 %%
 cvx_begin
-    variable y(N)
+    variable y(N+1)
 
     total_norm = 0; % initialize the expression
     for i = 1:N-1
@@ -20,16 +20,12 @@ cvx_begin
         % Constraint 16b
         total_norm <= L;
 
-        % Constraint 16c
-        for i = 1:N-2 % Adjusted loop bounds
-            abs((y(i+2) - 2*y(i+1) + y(i)) / h^2) <= C;
-        end
 
         % Constraint 16d
         y(1) == 0;
 
         % Constraint 16e
-        y(N) == 0;
+        y(N+1) == 0;
 
         % Constraint 16f
         % Assuming y_fixed is a vector and F is a set of indices into y
