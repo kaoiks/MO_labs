@@ -21,6 +21,8 @@ cvx_begin
        norm(v(2:end)-v(1:end-1), 1) <= q;
 cvx_end
 %%
+save("zad1_wynik.mat", 'v');
+
 N = length(y);
 x_values = linspace(0, 1, N);
 figure;
