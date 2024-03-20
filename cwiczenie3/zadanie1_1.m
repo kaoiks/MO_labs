@@ -9,16 +9,13 @@ for i=1:(N-1)
     D(i, i) = -1;
     D(i, i+1) = 1;
 end
-q=1.6;
+tau=1.6;
 size(D)
 %%
 cvx_begin
     variable v(N)
     
-    minimize(norm(y - v, 2) + norm(v(2:end)-v(1:end-1), 1) * q)
-    subject to 
-%         norm(D*v, 1) <= q
-%        norm(v(2:end)-v(1:end-1), 1) <= q;
+    minimize(norm(y - v, 2) + norm(v(2:end)-v(1:end-1), 1) * tau)
 cvx_end
 %%
 
