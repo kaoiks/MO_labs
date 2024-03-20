@@ -2,7 +2,7 @@ load("Data01.mat")
 
 N = length(y);
 M = N;
-q = 1.5;
+q = 1.55;
 
 D = zeros(M, N);
 for i=1:(N-1)
