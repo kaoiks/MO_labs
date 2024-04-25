@@ -118,12 +118,12 @@ while true
     x_es{i} = x;
     N = N + 1;
     i = i + 1;
-    if N > 1
+    if N > 5
         break
     end
 end
 
-x_optimal = x; % Optimal point found by the algorithm
+x_newton = x; % Optimal point found by the algorithm
 
 x1_range = linspace(-3.5, 2.5, 100);
 x2_range = linspace(-2.2, 2.2, 100);
@@ -150,4 +150,15 @@ end
 hold off;
 
 x_optimal = fminsearch(f0_1, x0);
-display(x_optimal);
+
+cvx_begin
+    variable x_cvx(2)
+    minimize(f0_1(x_cvx))
+cvx_end
+
+disp('X [Newton]: ');
+disp(x_newton);
+disp('X [CVX]: ');
+disp(x_cvx);
+disp('X [fminsearch]: ');
+disp(x_optimal);
