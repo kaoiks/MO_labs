@@ -13,7 +13,7 @@ f0_hessian = @(x, t, P, xc) t * [exp(x(1) + 3*x(2) - 0.1), 3*exp(x(1) + 3*x(2) -
                      - (2 * P) ...
                      / (1 - (x - xc).' * P * (x - xc));
  
-tol = 1e-4;
+tol = 1e-6;
 epsilon = tol;
 xc = [1; 1];
 x0 = xc;
@@ -31,7 +31,7 @@ beta = 0.8;
  
 i = 2;
 N = 0;
-t = 10;
+t = 1;
 while true
     g = grad_f0(x, t, P, xc);           % Gradient at current point x
     H = f0_hessian(x, t, P, xc);           % Hessian at current point x
@@ -53,10 +53,17 @@ while true
     N = N + 1;
     i = i + 1;
  
-    if N > 5
-        break
-    end
+ 
 end
+ 
+ 
+ 
+cvx_begin
+    variable x_cvx(2)
+    minimize(t*(exp(x_cvx(1) + 3*x_cvx(2) - 0.1) + exp(-x_cvx(1) - 0.1)) - log(1 - (x_cvx - xc)' * P * (x_cvx - xc)));
+cvx_end
+disp(x_cvx);
+ 
  
 x_optimal = x; % Optimal point found by the algorithm
 display(x_optimal);
@@ -64,23 +71,6 @@ f_to_minimize = @(x) f0(x, t, P, xc);
  
 x_optimal_2 = fminsearch(f_to_minimize, x0);
 display(x_optimal_2);
-% 
-% 
-% options = optimset('fminsearch')
-% options.To1X = 1e-4;
-% options.TolFun = 1e-4;
-% options.MaxIter = 1000000;
-% 
-% [x, fval, exitflag, output] = fminsearch(f_to_minimize, x0);
- 
- 
- 
-% cvx_begin
-%     variable x_cvx(2)
-%     
-%     minimize(f0(x_cvx, t, P, xc))
-% cvx_end
- 
  
 function f = f0(x, t, P, xc)
     % Ensure that x and xc are column vectors
